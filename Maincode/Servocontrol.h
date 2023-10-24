@@ -4,11 +4,11 @@
 
 class ServoControl {
   public:
-    ServoControl(int servoAnalogPin, int servoDigitalPin);
+    ServoControl(int analogPin, int digitalPin);
     void runConstant(int delayMicroSec);
   private:
-    int _servoAnalogPin;
-    int _servoDigitalPin;
+    int _analogPin;
+    int _digitalPin;
 };
 
 #endif

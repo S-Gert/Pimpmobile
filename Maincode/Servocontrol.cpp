@@ -2,16 +2,18 @@
 #include "Servocontrol.h"
 
 //constructor :: <-- scope resolution operator
-ServoControl::ServoControl(int servoAnalogPin, int servoDigitalPin){
+// pins analog D6, digital D3
+ServoControl::ServoControl(int analogPin, int digitalPin){
   Serial.begin(9600);
-  pinMode(servoAnalogPin, OUTPUT);
-  _servoAnalogPin = servoAnalogPin;
-  _servoDigitalPin = servoDigitalPin;
+  pinMode(analogPin, OUTPUT);
+  pinMode(digitalPin, OUTPUT);
+  _analogPin = analogPin;
+  _digitalPin = digitalPin;
 }
 
 void ServoControl::runConstant(int delayMicroSec){
-  digitalWrite(_servoAnalogPin, HIGH);
+  digitalWrite(_analogPin, HIGH);
   delayMicroseconds(delayMicroSec);
-  digitalWrite(_servoAnalogPin, LOW);
+  digitalWrite(_analogPin, LOW);
   delayMicroseconds(delayMicroSec);
 }
