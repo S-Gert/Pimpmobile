@@ -1,7 +1,7 @@
 #include "Motorcontrol.h"
 #include "Arduino.h"
 
-// pins analog D4, digital D0
+// pins analog D9, digital D0
 MotorControl::MotorControl(int analogPin, int digitalPin){
   Serial.begin(9600);
   pinMode(analogPin, OUTPUT);
@@ -10,16 +10,11 @@ MotorControl::MotorControl(int analogPin, int digitalPin){
   _digitalPin = digitalPin;
 }
 
-void MotorControl::forwards(int delayMicroSec){
-  digitalWrite(_analogPin, HIGH);
-  delayMicroseconds(delayMicroSec);
-  digitalWrite(_analogPin, LOW);
-  delayMicroseconds(delayMicroSec);
-}
-void MotorControl::backwards(int delayMicroSec){
-  digitalWrite(_digitalPin, HIGH);
-  digitalWrite(_analogPin, HIGH);
-  delayMicroseconds(delayMicroSec);
-  digitalWrite(_analogPin, LOW);
-  delayMicroseconds(delayMicroSec);
+void MotorControl::runConstant(int pwmVal, bool direction){
+  if (direction == 1){
+    digitalWrite(_digitalPin, HIGH);
+  } else {
+    digitalWrite(_digitalPin, LOW);
+  }
+  analogWrite(_analogPin, value);
 }

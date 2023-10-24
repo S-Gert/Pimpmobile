@@ -5,8 +5,7 @@
 class MotorControl {
   public:
     MotorControl(int analogPin, int digitalPin);
-    void forwards(int delayMicroSec);
-    void backwards(int delayMicroSec);
+    void runConstant(int pwmVal, bool direction);
   private:
     int _analogPin;
     int _digitalPin;

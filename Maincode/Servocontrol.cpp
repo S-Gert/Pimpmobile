@@ -11,7 +11,12 @@ ServoControl::ServoControl(int analogPin, int digitalPin){
   _digitalPin = digitalPin;
 }
 
-void ServoControl::runConstant(int delayMicroSec){
+void ServoControl::runConstant(int delayMicroSec, bool direction){
+  if (direction == 1){
+    digitalWrite(_digitalPin, HIGH);
+  } else {
+    digitalWrite(_digitalPin, LOW);
+  }
   digitalWrite(_analogPin, HIGH);
   delayMicroseconds(delayMicroSec);
   digitalWrite(_analogPin, LOW);
