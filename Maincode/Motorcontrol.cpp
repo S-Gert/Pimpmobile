@@ -16,5 +16,5 @@ void MotorControl::runConstant(int pwmVal, bool direction){
   } else {
     digitalWrite(_digitalPin, LOW);
   }
-  analogWrite(_analogPin, value);
+  analogWrite(_analogPin, pwmVal);
 }
