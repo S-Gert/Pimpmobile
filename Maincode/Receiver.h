@@ -5,12 +5,14 @@
 class ReceiverData {
   public:
     ReceiverData(int channel_1, int channel_2);
-    double readChannels ();
-    void printValues(double channel_1Val, double channel_2Val);
-    double  channel_1Val = 0;
-    double  channel_2Val = 0; 
+    double readChannel1 ();
+    double readChannel2 ();
+    void printValues(double ch1, double ch2);
+    double channel_val;
   
   private:
+    int constrainValues(int value, int minout, int maxout);
+    double readChannelBase(int channel_val, int minout, int maxout);
     int _channel_1;
     int _channel_2;
 };

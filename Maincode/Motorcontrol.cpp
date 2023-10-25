@@ -10,11 +10,12 @@ MotorControl::MotorControl(int analogPin, int digitalPin){
   _digitalPin = digitalPin;
 }
 
-void MotorControl::runConstant(int pwmVal, bool direction){
-  if (direction == 1){
+void MotorControl::run(int pwmVal){
+  if (pwmVal < 0){
     digitalWrite(_digitalPin, HIGH);
   } else {
     digitalWrite(_digitalPin, LOW);
   }
-  analogWrite(_analogPin, pwmVal);
+  analogWrite(_analogPin, abs(pwmVal));
 }
+
