@@ -3,7 +3,6 @@
 
 // pins analog D9, digital D0
 MotorControl::MotorControl(int analogPin, int digitalPin){
-  Serial.begin(9600);
   pinMode(analogPin, OUTPUT);
   pinMode(digitalPin, OUTPUT);
   _analogPin = analogPin;
