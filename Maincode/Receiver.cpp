@@ -12,7 +12,7 @@ ReceiverData::ReceiverData(int channel_1, int channel_2)  {
 int ReceiverData::constrainValues(int value, int minout, int maxout){
   value -= 1519;
   int newValue = map(value, -507, 507, minout, maxout);
-  if (newValue < 6 && newValue > -6){
+  if (newValue <= 1 && newValue >= -1){
     return 0;
   }
   return newValue;
@@ -31,7 +31,14 @@ int ReceiverData::readChannel1 () {
   return readChannelBase(_channel_1, -256, 256);
 }
 int ReceiverData::readChannel2() {
-  return readChannelBase(_channel_2, -1000, 1000);
+  int recOut = readChannelBase(_channel_2, -5, 5);
+  if (recOut == 0) {
+    return recOut;
+  } else if (recOut > 0) {
+    return (recOut-1);
+  } else {
+    return (recOut+1);
+  }
 }
 
 void ReceiverData::printValues(int ch1, int ch2){

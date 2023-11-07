@@ -15,13 +15,20 @@ void setup(){
 }
 
 void loop(){
-  // time = 0;
-  ch2 = receiver.readChannel2();
+  // ch2 = receiver.readChannel2();
   // ch1 = receiver.readChannel1();
-  // receiver.printValues(ch1, ch2);
-  servo.run(ch2, 180);
-  // time = millis();
-  // servo.run(50);
-  // delay(5000);
-  //Serial.print(time);
+  //receiver.printValues(ch1, ch2);
+  // servo.moveDegree(1600);
+  delay(2000);
+  servo.run(3, 45);
+  // Serial.print("3");
+  delay(2000);
+  servo.run(0, 45);
+  delay(2000);
+  servo.run(-3, 45);
+  // Serial.print("-3");
+  delay(2000);
+  servo.run(0, 45);
+  // delay(3000);
+
 }
