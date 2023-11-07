@@ -9,13 +9,15 @@ class ServoControl {
     void moveDegree(double steps);
     double calculateSteps(double recData, double desiredAngle);
     int getStepsForDesiredDeg(double desiredAngle);
-    void turn(double stepCount, bool direction);
+    void turnR(double stepCount);
+    void turnL(double stepCount);
   private:
     double _pulse;
     int _analogPin;
     int _digitalPin;
     double _prevStepCount;
     int _position;
+    double _prevRecData;
 };
 
 #endif
