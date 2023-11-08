@@ -1,67 +1,58 @@
 #include "Arduino.h"
-#include "Servocontrol.h"// pins analog D6, digital D3
+#include "Servocontrol.h"
 
-ServoControl::ServoControl(int analogPin, int digitalPin){
+//pins analog D6, digital D3
+ServoControl::ServoControl(int analog_pin, int digital_pin){
   Serial.begin(9600);
-  pinMode(analogPin, OUTPUT);
-  pinMode(digitalPin, OUTPUT);
-  _analogPin = analogPin;
-  _digitalPin = digitalPin;
-  _prevStepCount = 0;
-  _prevRecData = 0;
+  pinMode(analog_pin, OUTPUT);
+  pinMode(digital_pin, OUTPUT);
+  _analog_pin = analog_pin;
+  _digital_pin = digital_pin;
+  _prev_step_count = 0;
+  _prev_receiver_data = 0;
   _position = 0;
   _pulse = 400;
 }
 
-int ServoControl::getStepsForDesiredDeg(double desiredAngle) {
-  double stepsMax = _pulse * 50; // gearbox ratio
-  return stepsMax / 360 * desiredAngle;
+int ServoControl::getStepsForDesiredDeg(double desired_angle) {
+  double steps_max = _pulse * 50; // steps_max = pulse * gearbox ratio
+  return steps_max / 360 * desired_angle;
 }
 
-double ServoControl::calculateSteps(double recData, double desiredAngle) {
-  int stepsForDesiredDeg = getStepsForDesiredDeg(desiredAngle);
-  double stepsPerDeg = stepsForDesiredDeg / desiredAngle; //13.888888
-  double stepsPerRecData = 4 / desiredAngle;  //22.222222
-  double steps = (abs(recData) / stepsPerRecData) * stepsPerDeg; // steps needed for x degree turn
+double ServoControl::calculateSteps(int receiver_data, double desired_angle) {
+  int steps_for_desired_deg = getStepsForDesiredDeg(desired_angle);
+  double steps_per_degree = steps_for_desired_deg / desired_angle; //13.888888
+  double steps_per_receiver_data = 4 / desired_angle;  //22.222222
+  double steps = (abs(receiver_data) / steps_per_receiver_data) * steps_per_degree; // steps needed for x degree turn
   return steps;
 }
 
 void ServoControl::moveDegree(double steps){
   for (int i; i < int(steps); i++){
-    digitalWrite(_analogPin, HIGH);
+    digitalWrite(_analog_pin, HIGH);
     delayMicroseconds(100);
-    digitalWrite(_analogPin, LOW);
+    digitalWrite(_analog_pin, LOW);
     delayMicroseconds(100);
   }
 }
 
-void ServoControl::turnR(double stepCount) {
-  if (stepCount > _prevStepCount) {
-    digitalWrite(_digitalPin, HIGH);
-    moveDegree(stepCount - _prevStepCount);
+void ServoControl::turn(double step_count, bool direction) {
+  if (step_count > _prev_step_count) {
+    digitalWrite(_digital_pin, direction);
+    moveDegree(step_count - _prev_step_count);
   } else {
-    digitalWrite(_digitalPin, LOW);
-    moveDegree(_prevStepCount - stepCount);
+    digitalWrite(_digital_pin, !direction);
+    moveDegree(_prev_step_count - step_count);
   }
 }
 
-void ServoControl::turnL(double stepCount) {
-  if (stepCount > _prevStepCount) {
-    digitalWrite(_digitalPin, LOW);
-    moveDegree(stepCount - _prevStepCount);
-  } else {
-    digitalWrite(_digitalPin, HIGH);
-    moveDegree(_prevStepCount - stepCount);
-  }
-}
-
-void ServoControl::run(double recData, double desiredAngle){
-  double stepCount = calculateSteps(recData, desiredAngle);
-  if (recData >= 0 && _prevRecData >= 0){ 
-    turnR(stepCount);
+void ServoControl::run(int receiver_data, double desired_angle){
+  double step_count = calculateSteps(receiver_data, desired_angle);
+  if (receiver_data >= 0 && _prev_receiver_data >= 0){ 
+    turn(step_count, 1);
   } else { 
-    turnL(stepCount);
+    turn(step_count, 0);
   }
-  _prevStepCount = stepCount;
-  _prevRecData = recData;
+  _prev_step_count = step_count;
+  _prev_receiver_data = receiver_data;
 }

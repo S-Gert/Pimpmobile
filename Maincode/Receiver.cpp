@@ -11,11 +11,11 @@ ReceiverData::ReceiverData(int channel_1, int channel_2)  {
 
 int ReceiverData::constrainValues(int value, int minout, int maxout){
   value -= 1519;
-  int newValue = map(value, -507, 507, minout, maxout);
-  if (newValue <= 1 && newValue >= -1){
+  int new_value = map(value, -507, 507, minout, maxout);
+  if (new_value <= 1 && new_value >= -1){
     return 0;
   }
-  return newValue;
+  return new_value;
 }
 
 int ReceiverData::readChannelBase(int channel, int minout, int maxout){
@@ -27,17 +27,18 @@ int ReceiverData::readChannelBase(int channel, int minout, int maxout){
       return constrainValues(channel_val, minout, maxout);
 }
 
-int ReceiverData::readChannel1 () {
+int ReceiverData::readChannel1() {
   return readChannelBase(_channel_1, -256, 256);
 }
+
 int ReceiverData::readChannel2() {
-  int recOut = readChannelBase(_channel_2, -5, 5);
-  if (recOut == 0) {
-    return recOut;
-  } else if (recOut > 0) {
-    return (recOut-1);
+  int rec_out = readChannelBase(_channel_2, -5, 5);
+  if (rec_out == 0) { // Create buffer between -1 and +1 where value remains 0 by removing 1 from either end of value
+    return rec_out;
+  } else if (rec_out > 0) {
+    return (rec_out-1);
   } else {
-    return (recOut+1);
+    return (rec_out+1);
   }
 }
 

@@ -4,11 +4,11 @@
 
 class MotorControl {
   public:
-    MotorControl(int analogPin, int digitalPin);
-    void run(int pwmVal);
+    MotorControl(int analog_pin, int digital_pin);
+    void run(int pwm_val);
   private:
-    int _analogPin;
-    int _digitalPin;
+    int _analog_pin;
+    int _digital_pin;
 };
 
 #endif

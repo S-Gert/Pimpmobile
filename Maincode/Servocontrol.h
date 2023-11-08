@@ -4,20 +4,19 @@
 
 class ServoControl {
   public:
-    ServoControl(int analogPin, int digitalPin);
-    void run(double recData, double desiredAngle);
+    ServoControl(int analog_pin, int digital_pin);
+    void run(int receiver_data, double desired_angle);
     void moveDegree(double steps);
-    double calculateSteps(double recData, double desiredAngle);
-    int getStepsForDesiredDeg(double desiredAngle);
-    void turnR(double stepCount);
-    void turnL(double stepCount);
+    double calculateSteps(int receiver_data, double desired_angle);
+    int getStepsForDesiredDeg(double desired_angle);
+    void turn(double step_count, bool direction);
   private:
     double _pulse;
-    int _analogPin;
-    int _digitalPin;
-    double _prevStepCount;
+    int _analog_pin;
+    int _digital_pin;
+    double _prev_step_count;
     int _position;
-    double _prevRecData;
+    int _prev_receiver_data;
 };
 
 #endif
