@@ -1,7 +1,7 @@
 #include "Motorcontrol.h"
 #include "Arduino.h"
 
-// pins analog D9, digital D0
+// pins analog D9, digital D0, analog 8, digital 2
 MotorControl::MotorControl(int analog_pin, int digital_pin){
   pinMode(analog_pin, OUTPUT);
   pinMode(digital_pin, OUTPUT);
@@ -21,9 +21,9 @@ void MotorControl::run(int pwm_val){
 }
 
 void MotorControl::teleopRun(bool input, int max_pwm_speed, int rampup_delay, bool forward){
-  if (forward == 0){
+  if (forward == 1){
     digitalWrite(_digital_pin, HIGH);
-  } else if (forward == 1) {
+  } else if (forward == 0) {
     digitalWrite(_digital_pin, LOW);
   }
   if (input == 1 && _current_pwm_speed < max_pwm_speed){

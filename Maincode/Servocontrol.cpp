@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "Servocontrol.h"
 
-//pins analog D6, digital D3
+//pins analog D6, digital D3: analog 9 digital 3
 ServoControl::ServoControl(int analog_pin, int digital_pin){
   Serial.begin(9600);
   pinMode(analog_pin, OUTPUT);

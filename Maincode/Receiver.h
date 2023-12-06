@@ -4,16 +4,11 @@
 
 class ReceiverData {
   public:
-    ReceiverData(int channel_1, int channel_2);
-    int readChannel1 ();
-    int readChannel2 ();
-    void printValues(int ch1, int ch2);
-  
+    ReceiverData();
+    long readChannelMapped(byte channel_input, int minmax_limit, int min_map, int max_map, int buffer_size, int default_value); 
+    long readChannelRaw(byte channel_input);
   private:
-    int constrainValues(int value, int minout, int maxout);
-    int readChannelBase(int channel, int minout, int maxout);
-    int _channel_1;
-    int _channel_2;
+    
 };
 
 #endif

@@ -1,70 +1,34 @@
-#include <Servocontrol.h>
-#include <Motorcontrol.h>
-#include <Receiver.h>
+#include "Servocontrol.h"
+#include "Motorcontrol.h"
+#include "Receiver.h"
 
-// Create objects
-ServoControl servo(D6, D3);
-MotorControl motors(D9, D0);
-ReceiverData receiver(D8, D7);
+// Create objects with output pins
+ServoControl servo(9, 3);
+MotorControl motors(8, 2);
+ReceiverData receiver;
 
-const int forward_motor_pin = D4;
-const int backward_motor_pin = D10;
-const int servo_left_pin = D12;
-const int servo_right_pin = D14;
-int servo_left_pin_read;
-int servo_right_pin_read;
-int forward_motor_pin_read;
-int backward_motor_pin_read;
 int max_angle_steps = servo.getStepsForDesiredDeg(45); 
-double ch1, ch2;
+int ch1_right_horizontal, ch3_left_vertical;
+bool last_direction;
+
+String RXed_byte;
 
 void setup(){
   Serial.begin(9600);
-  pinMode(forward_motor_pin, INPUT);
-  pinMode(backward_motor_pin, INPUT);
-  pinMode(servo_left_pin, INPUT);
-  pinMode(servo_right_pin, INPUT);
 }
 
 void loop(){
-  servo_left_pin_read = digitalRead(servo_left_pin);
-  servo_right_pin_read = digitalRead(servo_right_pin);
-  forward_motor_pin_read = digitalRead(forward_motor_pin);
-  backward_motor_pin_read = digitalRead(backward_motor_pin);
+  //Remote control code:
+  //ch1_right_horizontal = receiver.readChannelMapped(0, 4, 960, 1978, 0, 0);
+  //ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 10, 0);
+  //servo.run(ch1_right_horizontal, 45);
+  //motors.run(ch3_left_vertical);
+  //Serial.println(ch1_right_horizontal);
+  //Serial.println(ch3_left_vertical);
 
-  if (servo_left_pin_read == 1){
-    servo.runTeleOp(100, 1, max_angle_steps);
-  } else if (servo_right_pin_read == 1){
-    servo.runTeleOp(100, 0, max_angle_steps);
-  } else if (servo_left_pin_read == 0 && servo_right_pin_read == 0){
-    servo.returnToCenter(100);
+  //Serial communication code:
+  if (Serial.available()){
+    RXed_byte = Serial.readString();
+    Serial.print(RXed_byte);
   }
-
-  if (forward_motor_pin_read == 1){
-  motors.teleopRun(1, 200, 100, 1);
-  } else if (backward_motor_pin_read == 1){
-  motors.teleopRun(1, 200, 100, 0);
-  } else if (forward_motor_pin_read == 0){
-  motors.teleopRun(0, 200, 100, 1);
-  } else if (backward_motor_pin_read == 0){
-  motors.teleopRun(0, 200, 100, 0);
-  }
-  
-  // Serial.print(servo_left_pin_read);
-  // Serial.print('\n');
-  // Serial.print(servo_right_pin_read);
-  // Serial.print('\n');
-
-  // Serial.print(forward_motor_pin_read);
-  // Serial.print('\n');
-  // Serial.print(backward_motor_pin_read);
-  // Serial.print('\n');
-
-  // ch1 = receiver.readChannel1();
-  // ch2 = receiver.readChannel2();
-  // servo.run(ch2, 45);
-  // motors.run(ch1);
-  // receiver.printValues(ch1, ch2);
-
-
 }
