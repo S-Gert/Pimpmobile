@@ -13,9 +13,9 @@ MotorControl::MotorControl(int analog_pin, int digital_pin){
 
 void MotorControl::run(int pwm_val){
   if (pwm_val < 0){
-    digitalWrite(_digital_pin, HIGH);
-  } else {
     digitalWrite(_digital_pin, LOW);
+  } else {
+    digitalWrite(_digital_pin, HIGH);
   }
   analogWrite(_analog_pin, abs(pwm_val));
 }

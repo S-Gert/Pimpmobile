@@ -10,9 +10,10 @@ class ServoControl {
     double calculateSteps(int receiver_data, int max_received_value, double desired_angle);
     int getStepsForDesiredDeg(double desired_angle);
     void turn(double step_count, bool direction);
-    void runSimple(int delay, bool direction);
+    void runSimple(int max_angle, bool direction);
     void runTeleOp(int delay, bool direction, int max_angle_steps);
-    void returnToCenter(int delay);
+    void returnToCenter();
+    void printSteps();
   private:
     double _pulse;
     int _analog_pin;

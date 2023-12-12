@@ -34,9 +34,9 @@ double ServoControl::calculateSteps(int receiver_data, int max_received_value, d
 void ServoControl::moveDegree(double steps){
   for (int i; i < int(steps); i++){
     digitalWrite(_analog_pin, HIGH);
-    delayMicroseconds(100);
+    delayMicroseconds(50);
     digitalWrite(_analog_pin, LOW);
-    delayMicroseconds(100);
+    delayMicroseconds(50);
   }
 }
 
@@ -50,28 +50,37 @@ void ServoControl::turn(double step_count, bool direction) {
   }
 }
 
-void ServoControl::runSimple(int delay, bool direction){
+void ServoControl::runSimple(int max_angle, bool direction){
+  //if (abs(_current_steps) >= getStepsForDesiredDeg(max_angle)){
+  //  return;
+  //}
   if (direction == 1){
     digitalWrite(_digital_pin, HIGH);
+    //_current_steps += 50;
   } else if (direction == 0) {
     digitalWrite(_digital_pin, LOW);
+    //_current_steps -= 50;
   }
-  digitalWrite(_analog_pin, HIGH);
-  delayMicroseconds(delay);
-  digitalWrite(_analog_pin, LOW);
-  delayMicroseconds(delay);
+  //for (int i; i < 50; i++){
+    digitalWrite(_analog_pin, HIGH);
+    delayMicroseconds(100);
+    digitalWrite(_analog_pin, LOW);
+    delayMicroseconds(100);
+  //}
 }
 
-void ServoControl::returnToCenter(int delay){
+void ServoControl::returnToCenter(){
   if(_current_steps > 0){
-    for (int i; i < int(abs(_current_steps)); i++){
-      runSimple(delay, 0);
-    }// end of for loop
+    digitalWrite(_digital_pin, HIGH);
   } else if (_current_steps < 0){
-    for (int i; i < int(abs(_current_steps)); i++){
-      runSimple(delay, 1);
-    }//end of for loop
-  }// end of if
+    digitalWrite(_digital_pin, LOW);
+  }
+  for (int i; i < int(abs(_current_steps)); i += 50){
+    digitalWrite(_analog_pin, HIGH);
+    delayMicroseconds(100);
+    digitalWrite(_analog_pin, LOW);
+    delayMicroseconds(100);
+  }
   _current_steps = 0;
 }
 void ServoControl::runTeleOp(int delay, bool direction, int max_angle_steps){
@@ -89,6 +98,10 @@ void ServoControl::runTeleOp(int delay, bool direction, int max_angle_steps){
   } else {
     return;
   }
+}
+
+void ServoControl::printSteps(){
+  Serial.println(_current_steps);
 }
 
 void ServoControl::run(int receiver_data, double desired_angle){
