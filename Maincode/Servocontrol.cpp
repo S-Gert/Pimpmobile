@@ -56,17 +56,15 @@ void ServoControl::runSimple(int max_angle, bool direction){
   //}
   if (direction == 1){
     digitalWrite(_digital_pin, HIGH);
-    //_current_steps += 50;
+    _current_steps += 1;
   } else if (direction == 0) {
     digitalWrite(_digital_pin, LOW);
-    //_current_steps -= 50;
+    _current_steps -= 1;
   }
-  //for (int i; i < 50; i++){
     digitalWrite(_analog_pin, HIGH);
     delayMicroseconds(100);
     digitalWrite(_analog_pin, LOW);
     delayMicroseconds(100);
-  //}
 }
 
 void ServoControl::returnToCenter(){
@@ -75,13 +73,19 @@ void ServoControl::returnToCenter(){
   } else if (_current_steps < 0){
     digitalWrite(_digital_pin, LOW);
   }
-  for (int i; i < int(abs(_current_steps)); i += 50){
+  int steps_back = 0;
+  while (abs(_current_steps) != 0){
+    if (_current_steps < 0){
+      _current_steps += 1;
+    } else {
+      _current_steps -= 1
+    }
     digitalWrite(_analog_pin, HIGH);
     delayMicroseconds(100);
     digitalWrite(_analog_pin, LOW);
     delayMicroseconds(100);
   }
-  _current_steps = 0;
+  //_current_steps = 0;
 }
 void ServoControl::runTeleOp(int delay, bool direction, int max_angle_steps){
   if (abs(_current_steps) < max_angle_steps){
