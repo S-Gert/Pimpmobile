@@ -1,64 +1,47 @@
 #include "Servocontrol.h"
 #include "Motorcontrol.h"
 #include "Receiver.h"
+#include "Encoder.h"
 
 #define servo_driver_toggle 13
-// Create objects with output pins
+
+// Create objects with pins
 ServoControl servo(51, 33);
 MotorControl motors(9, 22);
+EncoderData encoder(4, 5, 6);
 ReceiverData receiver;
-
-int max_angle_steps = servo.getStepsForDesiredDeg(45); 
-int ch1_right_horizontal, ch3_left_vertical, ch8_switch;
-bool last_direction;
-
-String RXed_byte;
+int RXed_int;
+int ch1_right_horizontal, ch3_left_vertical, ch8_switch_lock, ch6_switch_to_toggle;
 
 void setup(){
   Serial.begin(9600);
-}
-
-void remote_control(){
-  ch1_right_horizontal = receiver.readChannelMapped(0, 4, 960, 1978, 0, 0);
-  ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 10, 0);
-  servo.run(ch1_right_horizontal, 45);
-  motors.run(ch3_left_vertical);
-  Serial.println(ch1_right_horizontal);
+  Serial.setTimeout(10);
+  delay(3000); // time for the receiver and remote to properly start without giving crazy numbers
 }
 
 void loop(){
-  //Remote control lock code:
-  // while (receiver.readChannelRaw(9) == 1000){ // If switch is down, then this code executes
-  //   Serial.println("--MOTORS LOCKED--");
-  //   //motors.run(0);
-  //}
-  ch8_switch = receiver.readChannelRaw(9);
-  ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 10, 0);
+  ch8_switch_lock = receiver.readChannelRaw(9);
+  ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 30, 0);
   ch1_right_horizontal = receiver.readChannelMapped(0, 4, 960, 1978, 0, 0);
+  ch6_switch_to_toggle = receiver.readChannelRaw(6);
 
-  if (ch8_switch == 1000){
+  if (ch8_switch_lock == 1000){ //Lock motors and servo
     digitalWrite(servo_driver_toggle, HIGH);
     motors.run(0);
     Serial.println("--MOTORS LOCKED--");
-  } else {
+  } else if (ch8_switch_lock != 1000 && ch6_switch_to_toggle == 1000){ // Remote control
     if (ch1_right_horizontal > 0){
-      servo.runSimple(45, 1);
+      servo.run(420, 1);
     } else if(ch1_right_horizontal < 0){
-      servo.runSimple(45, 0);
-    }// else if(ch1_right_horizontal == 0){
-    //  servo.returnToCenter();
-    //}
-    //servo.printSteps();
+      servo.run(420, 0);
+    }
     digitalWrite(servo_driver_toggle, LOW);
-    //servo.run(ch1_right_horizontal, 45);
     motors.run(ch3_left_vertical);
+    Serial.println("--UNLOCKED--");
   }
-  //remote_control();
-  //servo.run(ch1_right_horizontal, 45);
-  //Serial.println(ch8_switch);
   //Serial communication code:
-  // if (Serial.available()){
-  //   RXed_byte = Serial.readString();
-  //   Serial.print(RXed_byte);
-  // }
+  if (ch6_switch_to_toggle == 2000 && ch8_switch_lock == 2000){
+    RXed_int = Serial.parseInt();
+    Serial.println(encoder.read());
+    }
 }
