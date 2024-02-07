@@ -8,12 +8,11 @@ ServoControl::ServoControl(int analog_pin, int digital_pin){
   pinMode(digital_pin, OUTPUT);
   _analog_pin = analog_pin;
   _digital_pin = digital_pin;
-  _last_turn_angle;
 }
 
-void ServoControl::run(int encoder_angle, int max_angle, int min_angle, int input, bool direction){
+void ServoControl::run(int encoder_angle, int input, bool direction){
   int turn_angle = input + 500;
-  if(turn_angle == encoder_angle){
+  if(turn_angle <= encoder_angle + 5 && turn_angle >= encoder_angle - 5){
     return;
   }
   if (direction == 1){
@@ -28,7 +27,15 @@ void ServoControl::run(int encoder_angle, int max_angle, int min_angle, int inpu
     }
   }
     digitalWrite(_analog_pin, HIGH);
-    delayMicroseconds(100);
+    //delayMicroseconds(10);
     digitalWrite(_analog_pin, LOW);
-    delayMicroseconds(100);
+    //delayMicroseconds(10);
+}
+
+void ServoControl::returnToCenter(int enc_pos){
+  if(enc_pos > 505){
+    run(enc_pos, 0, 0);
+  } else if(enc_pos < 495){
+    run(enc_pos, 0, 1);
+  }
 }
