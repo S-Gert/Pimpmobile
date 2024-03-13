@@ -27,9 +27,9 @@ void ServoControl::run(int encoder_angle, int input, bool direction){
     }
   }
     digitalWrite(_analog_pin, HIGH);
-    //delayMicroseconds(10);
+    delayMicroseconds(10);
     digitalWrite(_analog_pin, LOW);
-    //delayMicroseconds(10);
+    delayMicroseconds(10);
 }
 
 void ServoControl::returnToCenter(int enc_pos){
