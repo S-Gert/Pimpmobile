@@ -21,3 +21,4 @@ long ReceiverData::readChannelMapped(byte channel_input, int minmax_limit, int m
 long ReceiverData::readChannelRaw(byte channel_input){
   return ibus.readChannel(channel_input);
 }
+

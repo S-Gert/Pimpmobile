@@ -10,7 +10,7 @@
 ServoControl servo(51, 33);
 MotorControl r_motor(9, 22);
 MotorControl l_motor(10, 26);
-EncoderData encoder(4, 5, 6);
+EncoderData servo_encoder(4, 5, 6);
 ReceiverData receiver;
 
 bool motor_brake_state = 0;
@@ -43,7 +43,7 @@ void loop(){
   }
   ch7_diff_toggle = receiver.readChannelRaw(7);
   ch6_switch_to_toggle = receiver.readChannelRaw(6);
-  encoder_pos = encoder.read();
+  encoder_pos = servo_encoder.read();
 
   // ####### MOTOR LOCK ######
   if (ch8_switch_lock == 1000){
@@ -96,6 +96,7 @@ void loop(){
     if (Serial.available() > 0) {
       RXed_str = Serial.readStringUntil('\n');
 
+      // turn string into list of ints
       int values[3];
       int i = 0;
       char *ptr = strtok((char *)RXed_str.c_str(), ",");
@@ -104,6 +105,7 @@ void loop(){
         ptr = strtok(NULL, ",");
       }
 
+      // get values from list
       to_motors = values[0];
       to_servo = values[1];
       to_brakes = values[2];
@@ -120,8 +122,8 @@ void loop(){
       //Serial.println(values[0]); // gas pedal -255 to 255
       //Serial.println(values[1]); // steering wheel -255 to 255
       //Serial.println(values[2]); // brake pedal 0 to 1
-    
     } // end of Serial.available()
+    
     if (to_servo > 0){ // turning right
       servo.run(encoder_pos, to_servo, 1);
     } else if(to_servo < 0){ // turning left
