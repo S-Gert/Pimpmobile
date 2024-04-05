@@ -4,9 +4,9 @@
 
 IBusBM ibus; // Creates Ibus object
 
-// Ibus RX1-19
+// Ibus RX1-19, RX2-17, RX3-15
 ReceiverData::ReceiverData() {
-  ibus.begin(Serial1);
+  ibus.begin(Serial3);
 }
 
 long ReceiverData::readChannelMapped(byte channel_input, int minmax_limit, int min_map, int max_map,
