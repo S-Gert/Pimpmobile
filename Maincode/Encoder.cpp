@@ -2,7 +2,6 @@
 #include "Arduino.h"
 
 EncoderData::EncoderData(int cs_pin, int data_pin, int clock_pin){
-  Serial.begin(9600);
   pinMode(cs_pin, OUTPUT);
   pinMode(data_pin, INPUT);
   pinMode(clock_pin, OUTPUT);
