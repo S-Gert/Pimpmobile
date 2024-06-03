@@ -11,41 +11,36 @@ ServoControl::ServoControl(int analog_pin, int digital_pin, int servo_driver_tog
   _digital_pin = digital_pin;
 }
 
-void ServoControl::run(int encoder_angle, int input, bool direction, bool teleop){
-  int turn_angle = input + 500;
-  int to_max_turn_angle = 255;
-  if(turn_angle <= encoder_angle + 5 && turn_angle >= encoder_angle - 5){
+void ServoControl::run(int input, int encoder_pos, bool direction){
+  int encoder_middle_value = 500;
+  int desired_turn_angle = input + encoder_middle_value;
+
+  if(desired_turn_angle <= encoder_pos + 5 && desired_turn_angle >= encoder_pos - 5){
     return;
   } 
 
-  if (teleop == 1){
-    if (turn_angle >= 500 + to_max_turn_angle | turn_angle <= 500 - to_max_turn_angle){
-      return;
-    } 
-  }
-
   if (direction == 1){
     digitalWrite(_digital_pin, HIGH);
-    if(encoder_angle > turn_angle){
+    if(encoder_pos > desired_turn_angle){
       digitalWrite(_digital_pin, LOW);
     }
   } else if (direction == 0) {
     digitalWrite(_digital_pin, LOW);
-    if(encoder_angle < turn_angle){
+    if(encoder_pos < desired_turn_angle){
       digitalWrite(_digital_pin, HIGH);
     }
   }
     digitalWrite(_analog_pin, HIGH);
-    delayMicroseconds(10);
+    //delayMicroseconds(10);
     digitalWrite(_analog_pin, LOW);
-    delayMicroseconds(10);
+    //delayMicroseconds(10);
 }
 
-void ServoControl::returnToCenter(int enc_pos){
-  if(enc_pos > 505){
-    run(enc_pos, 0, 0, 0);
-  } else if(enc_pos < 495){
-    run(enc_pos, 0, 1, 0);
+void ServoControl::returnToCenter(int encoder_pos){
+  if(encoder_pos > 505){
+    run(0, encoder_pos, 0);
+  } else if(encoder_pos < 495){
+    run(0, encoder_pos, 1);
   }
 }
 
@@ -60,9 +55,9 @@ void ServoControl::remoteControlTurning(int rc_channel_value, int encoder_pos){
   }
   //turning
   if (rc_channel_value > 0){ // turning right
-    run(encoder_pos, rc_channel_value, 1, 0);
+    run(rc_channel_value, encoder_pos, 1);
   } else if(rc_channel_value < 0){ // turning left
-    run(encoder_pos, rc_channel_value, 0, 0);
+    run(rc_channel_value, encoder_pos, 0);
   } else if(rc_channel_value == 0){
     returnToCenter(encoder_pos);
   }
