@@ -18,15 +18,16 @@ int EncoderData::read(){
   // Read 12 bits from the encoder
   for (int i = 0; i < 12; i++) {
     // Toggle the clock
-    digitalWrite(_clock_pin, HIGH);
-    delayMicroseconds(1); // Short delay for clock pulse
     digitalWrite(_clock_pin, LOW);
+    delayMicroseconds(1); // Short delay for clock pulse
+    digitalWrite(_clock_pin, HIGH);
+    delayMicroseconds(1);
     // Read a bit of data
     reading <<= 1;
     if (digitalRead(_data_pin)) {
       reading |= 1;
     }
-    delayMicroseconds(1);
+    //delayMicroseconds(1);
   }
   // Pull CS high to deselect the encoder
   digitalWrite(_cs_pin, HIGH);

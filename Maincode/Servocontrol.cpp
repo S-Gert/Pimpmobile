@@ -31,15 +31,15 @@ void ServoControl::run(int input, int encoder_pos, bool direction){
     }
   }
     digitalWrite(_analog_pin, HIGH);
-    //delayMicroseconds(10);
+    delayMicroseconds(10);
     digitalWrite(_analog_pin, LOW);
-    //delayMicroseconds(10);
+    delayMicroseconds(10);
 }
 
 void ServoControl::returnToCenter(int encoder_pos){
-  if(encoder_pos > 505){
+  if(encoder_pos > 502){
     run(0, encoder_pos, 0);
-  } else if(encoder_pos < 495){
+  } else if(encoder_pos < 497){
     run(0, encoder_pos, 1);
   }
 }
@@ -48,17 +48,22 @@ void ServoControl::activateServo(bool state){
   digitalWrite(_servo_driver_toggle_pin, !state);
 }
 
-void ServoControl::remoteControlTurning(int rc_channel_value, int encoder_pos){
-  //  Turning buffer near 0
-  if (-5 < rc_channel_value && rc_channel_value < 5){
-    rc_channel_value = 0;
+int ServoControl::bufferZone(int input, int buffer_size){
+  if (-buffer_size < input && input < buffer_size){
+    input = 0;
   }
+  return input;
+}
+
+void ServoControl::runWithBufferAndDirection(int input, int encoder_pos){
+  //  Turning buffer near 0
+  input = bufferZone(input, 10);
   //turning
-  if (rc_channel_value > 0){ // turning right
-    run(rc_channel_value, encoder_pos, 1);
-  } else if(rc_channel_value < 0){ // turning left
-    run(rc_channel_value, encoder_pos, 0);
-  } else if(rc_channel_value == 0){
+  if (input > 0){ // turning right
+    run(input, encoder_pos, 1);
+  } else if(input < 0){ // turning left
+    run(input, encoder_pos, 0);
+  } else if(input == 0){
     returnToCenter(encoder_pos);
   }
 }

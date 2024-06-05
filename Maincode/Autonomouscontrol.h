@@ -29,8 +29,7 @@ class AutoControl {
     int RX_motors;
     int RX_servo;
     int RX_brakes;
-    byte buf[];
-
+    // byte buf[];
 
     void readSerial();
     void writeSerial(int write_value);

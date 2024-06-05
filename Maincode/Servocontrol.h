@@ -8,7 +8,8 @@ class ServoControl {
     void run(int input, int encoder_pos, bool direction);
     void returnToCenter(int encoder_pos);
     void activateServo(bool state);
-    void remoteControlTurning(int rc_channel_value, int encoder_pos);
+    int bufferZone(int input, int buffer_size);
+    void runWithBufferAndDirection(int input, int encoder_pos);
   private:
     int _analog_pin;
     int _digital_pin;

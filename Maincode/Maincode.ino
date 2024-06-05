@@ -8,7 +8,7 @@
 ServoControl servo(51, 33, 13);
 MotorControl r_motor(9, 22, 46);
 MotorControl l_motor(10, 26, 46);
-EncoderData servo_encoder(4, 5, 6);
+EncoderData servo_encoder(6, 7, 8); // 4, 5, 6
 AutoControl autonomous;
 ReceiverData receiver;
 
@@ -33,7 +33,7 @@ void readRcChannels(){
   ch9_switch_lock = receiver.readChannelRaw(9);
   ch8_tri_switch = receiver.readChannelRaw(8); // the values are: 1000, 1500, 2000
   ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 30, 0);
-  ch1_right_horizontal = receiver.readChannelMapped(0, 280, 980, 1978, 0, 0);
+  ch1_right_horizontal = receiver.readChannelMapped(0, 255, 980, 1978, 0, 0);
   ch7_diff_toggle = receiver.readChannelRaw(7);
   ch6_switch_to_toggle = receiver.readChannelRaw(6);
   encoder_pos = servo_encoder.read();
@@ -47,6 +47,7 @@ void setup(){
 
 void loop(){
   readRcChannels();
+  // autonomous.writeSerial(encoder_pos);
 
   /* MOTORS & SERVO LOCKED */
   if (ch9_switch_lock == 1000){
@@ -62,7 +63,7 @@ void loop(){
     if (ch6_switch_to_toggle == 1000){
       r_motor.activateBrakes(false);
       l_motor.activateBrakes(false);
-      servo.remoteControlTurning(ch1_right_horizontal, encoder_pos);
+      servo.runWithBufferAndDirection(ch1_right_horizontal, encoder_pos);
       
       /* DIFFERENTIAL CHECK */
       if (ch7_diff_toggle == 1000){
@@ -89,7 +90,7 @@ void loop(){
         r_motor.activateBrakes(false);
         l_motor.activateBrakes(false);
 
-        servo.remoteControlTurning(RXservo, encoder_pos);
+        servo.runWithBufferAndDirection(RXservo, encoder_pos);
         
         /* DIFFERENTIAL CHECK */
         if (ch7_diff_toggle == 1000){
@@ -98,29 +99,9 @@ void loop(){
           l_motor.run(RXmotors);
           r_motor.run(RXmotors);
         }
-      }
+      } /* end of differential and brake check*/
 
-      //   if (RXservo > 0){
-      //     servo.run(encoder_pos, RXservo, 1, 1);
-      //   } else if (RXservo < 0) {
-      //     servo.run(encoder_pos, RXservo, 0, 1);
-      //   }
-        
-      //   //differential and motors
-      //   if (ch7_diff_toggle == 1000){
-      //     if (encoder_pos > 500){
-      //       l_motor.run(RXmotors);
-      //       r_motor.run(r_motor.diff(RXmotors, encoder_pos));
-      //     } else {
-      //       r_motor.run(RXmotors);
-      //       l_motor.run(l_motor.diff(RXmotors, encoder_pos));
-      //     }
-      //   } else {
-      //     l_motor.run(RXmotors);
-      //     r_motor.run(RXmotors);
-      //   } // end of diff
-      // } // end of brake
+    } /* end of autonomous control if */
+  } /* end of remote lock */
 
-    } // end of autonomous control if
-  } // end of remote lock
-} // end of loop
+} /* end of loop */

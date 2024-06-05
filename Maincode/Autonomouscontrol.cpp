@@ -3,7 +3,6 @@
 
 AutoControl::AutoControl(){
   i = 0;
-  byte buf[total_bytes];
 
   RX_motors = 0;
   RX_servo = 0;
@@ -13,18 +12,17 @@ AutoControl::AutoControl(){
 }
 
 void AutoControl::readSerial(){
+  byte buf[total_bytes];
   if (Serial.available() >= total_bytes) {
     i=0;
-    while(i<total_bytes){
+    while(i < total_bytes){
       buf[i] = Serial.read();
       i++;
     }
-    //delay(5); // !!
     memmove(&bytes,buf,sizeof(bytes));
     RX_motors = int(bytes.x);
     RX_servo = int(bytes.y);
     RX_brakes = int(bytes.z);
-    //values.val = to_brakes;
   } // struct serial end
 }
 
