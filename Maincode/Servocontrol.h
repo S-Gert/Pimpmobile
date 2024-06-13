@@ -5,6 +5,7 @@
 class ServoControl {
   public:
     ServoControl(int analog_pin, int digital_pin, int servo_driver_toggle_pin);
+    const int encoder_center = 500;
     void run(int input, int encoder_pos, bool direction);
     void returnToCenter(int encoder_pos);
     void activateServo(bool state);

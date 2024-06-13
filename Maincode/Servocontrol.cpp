@@ -12,21 +12,21 @@ ServoControl::ServoControl(int analog_pin, int digital_pin, int servo_driver_tog
 }
 
 void ServoControl::run(int input, int encoder_pos, bool direction){
-  int encoder_middle_value = 500;
-  int desired_turn_angle = input + encoder_middle_value;
+  const int encoder_pos_buffer = 5;
+  int desired_turn_angle = input + encoder_center;
 
-  if(desired_turn_angle <= encoder_pos + 5 && desired_turn_angle >= encoder_pos - 5){
+  if (desired_turn_angle <= encoder_pos + encoder_pos_buffer && desired_turn_angle >= encoder_pos - encoder_pos_buffer){
     return;
   } 
 
   if (direction == 1){
     digitalWrite(_digital_pin, HIGH);
-    if(encoder_pos > desired_turn_angle){
+    if (encoder_pos > desired_turn_angle){
       digitalWrite(_digital_pin, LOW);
     }
   } else if (direction == 0) {
     digitalWrite(_digital_pin, LOW);
-    if(encoder_pos < desired_turn_angle){
+    if (encoder_pos < desired_turn_angle){
       digitalWrite(_digital_pin, HIGH);
     }
   }
@@ -37,9 +37,11 @@ void ServoControl::run(int input, int encoder_pos, bool direction){
 }
 
 void ServoControl::returnToCenter(int encoder_pos){
-  if(encoder_pos > 502){
+  const int center_threshold = 2;
+
+  if (encoder_pos > encoder_center + center_threshold){
     run(0, encoder_pos, 0);
-  } else if(encoder_pos < 497){
+  } else if (encoder_pos < encoder_center - center_threshold){
     run(0, encoder_pos, 1);
   }
 }
@@ -56,14 +58,13 @@ int ServoControl::bufferZone(int input, int buffer_size){
 }
 
 void ServoControl::runWithBufferAndDirection(int input, int encoder_pos){
-  //  Turning buffer near 0
   input = bufferZone(input, 15);
-  //turning
+
   if (input > 0){ // turning right
     run(input, encoder_pos, 1);
-  } else if(input < 0){ // turning left
+  } else if (input < 0){ // turning left
     run(input, encoder_pos, 0);
-  } else if(input == 0){
+  } else if (input == 0){
     returnToCenter(encoder_pos);
   }
 }
