@@ -57,7 +57,7 @@ int ServoControl::bufferZone(int input, int buffer_size){
 
 void ServoControl::runWithBufferAndDirection(int input, int encoder_pos){
   //  Turning buffer near 0
-  input = bufferZone(input, 10);
+  input = bufferZone(input, 15);
   //turning
   if (input > 0){ // turning right
     run(input, encoder_pos, 1);

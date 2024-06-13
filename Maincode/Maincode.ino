@@ -14,7 +14,8 @@ ReceiverData receiver;
 
 int encoder_pos = 500; // ~500 is center, 780 max right, 220 max left
 int to_motors = 0, to_servo = 0, to_brakes = 0;
-int ch1_right_horizontal, ch3_left_vertical, ch9_switch_lock, ch6_switch_to_toggle, ch7_diff_toggle, ch8_tri_switch;
+int ch1_right_horizontal, ch3_left_vertical, ch4_left_knob, ch9_switch_lock, ch6_switch_to_toggle, ch7_diff_toggle, ch8_tri_switch;
+float multiplied_speed;
 int RXservo = 0;
 int RXmotors = 0;
 bool RXbrakes;
@@ -32,10 +33,12 @@ void run_diff(int motors_pwm, int encoder){
 void readRcChannels(){
   ch9_switch_lock = receiver.readChannelRaw(9);
   ch8_tri_switch = receiver.readChannelRaw(8); // the values are: 1000, 1500, 2000
-  ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 30, 0);
-  ch1_right_horizontal = receiver.readChannelMapped(0, 255, 980, 1978, 0, 0);
+  ch3_left_vertical = receiver.readChannelMapped(2, 255, 1000, 2000, 30);
+  ch1_right_horizontal = receiver.readChannelMapped(0, 255, 980, 1978, 0);
   ch7_diff_toggle = receiver.readChannelRaw(7);
   ch6_switch_to_toggle = receiver.readChannelRaw(6);
+  ch4_left_knob = (map(receiver.readChannelRaw(4), 1000, 2000, 0, 100));
+  //speed_multiplier = ch4_left_knob / 100; // Maps value to 0.0 to 1.0 range.
   encoder_pos = servo_encoder.read();
 }
 
@@ -47,6 +50,7 @@ void setup(){
 
 void loop(){
   readRcChannels();
+  autonomous.readWriteSerial(ch8_tri_switch);
   // autonomous.writeSerial(encoder_pos);
 
   /* MOTORS & SERVO LOCKED */
@@ -64,20 +68,21 @@ void loop(){
       r_motor.activateBrakes(false);
       l_motor.activateBrakes(false);
       servo.runWithBufferAndDirection(ch1_right_horizontal, encoder_pos);
+      multiplied_speed = (ch3_left_vertical * ch4_left_knob)/100;
       
       /* DIFFERENTIAL CHECK */
       if (ch7_diff_toggle == 1000){
-        run_diff(ch3_left_vertical, encoder_pos);
+        run_diff(int(trunc(multiplied_speed)), encoder_pos);
       } else {
-        l_motor.run(ch3_left_vertical);
-        r_motor.run(ch3_left_vertical);
+        l_motor.run(int(trunc(multiplied_speed)));
+        r_motor.run(int(trunc(multiplied_speed)));
       }
     } /* end of remote control */
 
     /* AUTONOMOUS SERIAL CONTROL */
     if (ch6_switch_to_toggle == 2000){
-      autonomous.readSerial();
-      autonomous.writeSerial(ch8_tri_switch);
+      // autonomous.readSerial();
+      // autonomous.writeSerial(ch8_tri_switch);
   
       RXbrakes = autonomous.getBrakesRX();
       RXmotors = autonomous.getMotorsRX();
@@ -94,7 +99,7 @@ void loop(){
         
         /* DIFFERENTIAL CHECK */
         if (ch7_diff_toggle == 1000){
-          run_diff(RXservo, encoder_pos);
+          run_diff(RXmotors, encoder_pos);
         } else {
           l_motor.run(RXmotors);
           r_motor.run(RXmotors);

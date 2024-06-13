@@ -5,7 +5,7 @@
 class ReceiverData {
   public:
     ReceiverData();
-    long readChannelMapped(byte channel_input, int minmax_limit, int min_map, int max_map, int buffer_size, int default_value); 
+    long readChannelMapped(byte channel_input, int minmax_limit, int min_map, int max_map, int buffer_size); 
     long readChannelRaw(byte channel_input);
   private:
     
